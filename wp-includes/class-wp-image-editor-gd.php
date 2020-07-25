@@ -23,7 +23,7 @@ class WP_Image_Editor_GD extends WP_Image_Editor {
 
 	public function __destruct() {
 		if ( $this->image ) {
-			// we don't need the original in memory anymore
+			// We don't need the original in memory anymore.
 			imagedestroy( $this->image );
 		}
 	}
@@ -41,7 +41,7 @@ class WP_Image_Editor_GD extends WP_Image_Editor {
 			return false;
 		}
 
-		// On some setups GD library does not provide imagerotate() - Ticket #11536
+		// On some setups GD library does not provide imagerotate() - Ticket #11536.
 		if ( isset( $args['methods'] ) &&
 			in_array( 'rotate', $args['methods'], true ) &&
 			! function_exists( 'imagerotate' ) ) {
@@ -146,9 +146,9 @@ class WP_Image_Editor_GD extends WP_Image_Editor {
 	 *
 	 * @since 3.5.0
 	 *
-	 * @param  int|null $max_w Image width.
-	 * @param  int|null $max_h Image height.
-	 * @param  bool     $crop
+	 * @param int|null $max_w Image width.
+	 * @param int|null $max_h Image height.
+	 * @param bool     $crop
 	 * @return true|WP_Error
 	 */
 	public function resize( $max_w, $max_h, $crop = false ) {
@@ -171,8 +171,8 @@ class WP_Image_Editor_GD extends WP_Image_Editor {
 	}
 
 	/**
-	 * @param int $max_w
-	 * @param int $max_h
+	 * @param int        $max_w
+	 * @param int        $max_h
 	 * @param bool|array $crop
 	 * @return resource|WP_Error
 	 */
@@ -197,16 +197,24 @@ class WP_Image_Editor_GD extends WP_Image_Editor {
 	}
 
 	/**
-	 * Resize multiple images from a single source.
+	 * Create multiple smaller images from a single source.
+	 *
+	 * Attempts to create all sub-sizes and returns the meta data at the end. This
+	 * may result in the server running out of resources. When it fails there may be few
+	 * "orphaned" images left over as the meta data is never returned and saved.
+	 *
+	 * As of 5.3.0 the preferred way to do this is with `make_subsize()`. It creates
+	 * the new images one at a time and allows for the meta data to be saved after
+	 * each new image is created.
 	 *
 	 * @since 3.5.0
 	 *
 	 * @param array $sizes {
-	 *     An array of image size arrays. Default sizes are 'small', 'medium', 'medium_large', 'large'.
+	 *     An array of image size data arrays.
 	 *
 	 *     Either a height or width must be provided.
 	 *     If one of the two is set to null, the resize will
-	 *     maintain aspect ratio according to the provided dimension.
+	 *     maintain aspect ratio according to the source image.
 	 *
 	 *     @type array $size {
 	 *         Array of height, width values, and whether to crop.
@@ -237,8 +245,15 @@ class WP_Image_Editor_GD extends WP_Image_Editor {
 	 *
 	 * @since 5.3.0
 	 *
-	 * @param array $size_data Array of width, height, and whether to crop.
-	 * @return WP_Error|array WP_Error on error, or the image data array for inclusion in the `sizes` array in the image meta.
+	 * @param array $size_data {
+	 *     Array of size data.
+	 *
+	 *     @type int  $width  The maximum width in pixels.
+	 *     @type int  $height The maximum height in pixels.
+	 *     @type bool $crop   Whether to crop the image to exact dimensions.
+	 * }
+	 * @return array|WP_Error The image data array for inclusion in the `sizes` array in the image meta,
+	 *                        WP_Error object on error.
 	 */
 	public function make_subsize( $size_data ) {
 		if ( ! isset( $size_data['width'] ) && ! isset( $size_data['height'] ) ) {
@@ -292,8 +307,8 @@ class WP_Image_Editor_GD extends WP_Image_Editor {
 	 * @return bool|WP_Error
 	 */
 	public function crop( $src_x, $src_y, $src_w, $src_h, $dst_w = null, $dst_h = null, $src_abs = false ) {
-		// If destination width/height isn't specified, use same as
-		// width/height from source.
+		// If destination width/height isn't specified,
+		// use same as width/height from source.
 		if ( ! $dst_w ) {
 			$dst_w = $src_w;
 		}
@@ -400,10 +415,10 @@ class WP_Image_Editor_GD extends WP_Image_Editor {
 	}
 
 	/**
-	 * @param resource $image
+	 * @param resource    $image
 	 * @param string|null $filename
 	 * @param string|null $mime_type
-	 * @return WP_Error|array
+	 * @return array|WP_Error
 	 */
 	protected function _save( $image, $filename = null, $mime_type = null ) {
 		list( $filename, $extension, $mime_type ) = $this->get_output_format( $filename, $mime_type );
@@ -417,7 +432,7 @@ class WP_Image_Editor_GD extends WP_Image_Editor {
 				return new WP_Error( 'image_save_error', __( 'Image Editor Save Failed' ) );
 			}
 		} elseif ( 'image/png' === $mime_type ) {
-			// convert from full colors to index colors, like original PNG.
+			// Convert from full colors to index colors, like original PNG.
 			if ( function_exists( 'imageistruecolor' ) && ! imageistruecolor( $image ) ) {
 				imagetruecolortopalette( $image, false, imagecolorstotal( $image ) );
 			}
@@ -433,20 +448,20 @@ class WP_Image_Editor_GD extends WP_Image_Editor {
 			return new WP_Error( 'image_save_error', __( 'Image Editor Save Failed' ) );
 		}
 
-		// Set correct file permissions
+		// Set correct file permissions.
 		$stat  = stat( dirname( $filename ) );
-		$perms = $stat['mode'] & 0000666; //same permissions as parent folder, strip off the executable bits
+		$perms = $stat['mode'] & 0000666; // Same permissions as parent folder, strip off the executable bits.
 		chmod( $filename, $perms );
 
-		/**
-		 * Filters the name of the saved image file.
-		 *
-		 * @since 2.6.0
-		 *
-		 * @param string $filename Name of the file.
-		 */
 		return array(
 			'path'      => $filename,
+			/**
+			 * Filters the name of the saved image file.
+			 *
+			 * @since 2.6.0
+			 *
+			 * @param string $filename Name of the file.
+			 */
 			'file'      => wp_basename( apply_filters( 'image_make_intermediate_size', $filename ) ),
 			'width'     => $this->size['width'],
 			'height'    => $this->size['height'],
@@ -484,8 +499,8 @@ class WP_Image_Editor_GD extends WP_Image_Editor {
 	 * @since 3.5.0
 	 *
 	 * @param string|stream $filename
-	 * @param callable $function
-	 * @param array $arguments
+	 * @param callable      $function
+	 * @param array         $arguments
 	 * @return bool
 	 */
 	protected function make_image( $filename, $function, $arguments ) {

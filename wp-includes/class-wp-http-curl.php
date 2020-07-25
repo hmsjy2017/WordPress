@@ -63,7 +63,7 @@ class WP_Http_Curl {
 	 *
 	 * @since 2.7.0
 	 *
-	 * @param string $url The request URL.
+	 * @param string       $url  The request URL.
 	 * @param string|array $args Optional. Override the defaults.
 	 * @return array|WP_Error Array containing 'headers', 'body', 'response', 'cookies', 'filename'. A WP_Error instance upon error
 	 */
@@ -129,7 +129,7 @@ class WP_Http_Curl {
 
 		curl_setopt( $handle, CURLOPT_URL, $url );
 		curl_setopt( $handle, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $handle, CURLOPT_SSL_VERIFYHOST, ( $ssl_verify === true ) ? 2 : false );
+		curl_setopt( $handle, CURLOPT_SSL_VERIFYHOST, ( true === $ssl_verify ) ? 2 : false );
 		curl_setopt( $handle, CURLOPT_SSL_VERIFYPEER, $ssl_verify );
 
 		if ( $ssl_verify ) {
@@ -143,9 +143,7 @@ class WP_Http_Curl {
 		 * a bug #17490 with redirected POST requests, so handle redirections outside Curl.
 		 */
 		curl_setopt( $handle, CURLOPT_FOLLOWLOCATION, false );
-		if ( defined( 'CURLOPT_PROTOCOLS' ) ) { // PHP 5.2.10 / cURL 7.19.4
-			curl_setopt( $handle, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS );
-		}
+		curl_setopt( $handle, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS );
 
 		switch ( $parsed_args['method'] ) {
 			case 'HEAD':
@@ -191,7 +189,7 @@ class WP_Http_Curl {
 				return new WP_Error(
 					'http_request_failed',
 					sprintf(
-						/* translators: 1: fopen(), 2: file name */
+						/* translators: 1: fopen(), 2: File name. */
 						__( 'Could not open handle for %1$s to %2$s.' ),
 						'fopen()',
 						$parsed_args['filename']
@@ -211,7 +209,7 @@ class WP_Http_Curl {
 			curl_setopt( $handle, CURLOPT_HTTPHEADER, $headers );
 		}
 
-		if ( $parsed_args['httpversion'] == '1.0' ) {
+		if ( '1.0' === $parsed_args['httpversion'] ) {
 			curl_setopt( $handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0 );
 		} else {
 			curl_setopt( $handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
@@ -225,9 +223,9 @@ class WP_Http_Curl {
 		 *
 		 * @since 2.8.0
 		 *
-		 * @param resource $handle  The cURL handle returned by curl_init() (passed by reference).
-		 * @param array    $parsed_args       The HTTP request arguments.
-		 * @param string   $url     The request URL.
+		 * @param resource $handle      The cURL handle returned by curl_init() (passed by reference).
+		 * @param array    $parsed_args The HTTP request arguments.
+		 * @param string   $url         The request URL.
 		 */
 		do_action_ref_array( 'http_api_curl', array( &$handle, $parsed_args, $url ) );
 
@@ -240,7 +238,7 @@ class WP_Http_Curl {
 				curl_close( $handle );
 				return new WP_Error( 'http_request_failed', $curl_error );
 			}
-			if ( in_array( curl_getinfo( $handle, CURLINFO_HTTP_CODE ), array( 301, 302 ) ) ) {
+			if ( in_array( curl_getinfo( $handle, CURLINFO_HTTP_CODE ), array( 301, 302 ), true ) ) {
 				curl_close( $handle );
 				return new WP_Error( 'http_request_failed', __( 'Too many redirects.' ) );
 			}
@@ -288,7 +286,7 @@ class WP_Http_Curl {
 					return new WP_Error( 'http_request_failed', $curl_error );
 				}
 			}
-			if ( in_array( curl_getinfo( $handle, CURLINFO_HTTP_CODE ), array( 301, 302 ) ) ) {
+			if ( in_array( curl_getinfo( $handle, CURLINFO_HTTP_CODE ), array( 301, 302 ), true ) ) {
 				curl_close( $handle );
 				return new WP_Error( 'http_request_failed', __( 'Too many redirects.' ) );
 			}

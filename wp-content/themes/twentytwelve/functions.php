@@ -120,7 +120,7 @@ function twentytwelve_setup() {
 
 	// This theme uses a custom image size for featured images, displayed on "standard" posts.
 	add_theme_support( 'post-thumbnails' );
-	set_post_thumbnail_size( 624, 9999 ); // Unlimited height, soft crop
+	set_post_thumbnail_size( 624, 9999 ); // Unlimited height, soft crop.
 
 	// Indicate widget sidebars can use selective refresh in the Customizer.
 	add_theme_support( 'customize-selective-refresh-widgets' );
@@ -130,7 +130,7 @@ add_action( 'after_setup_theme', 'twentytwelve_setup' );
 /**
  * Add support for a custom header image.
  */
-require( get_template_directory() . '/inc/custom-header.php' );
+require get_template_directory() . '/inc/custom-header.php';
 
 /**
  * Return the Google font stylesheet URL if available.
@@ -145,22 +145,24 @@ require( get_template_directory() . '/inc/custom-header.php' );
 function twentytwelve_get_font_url() {
 	$font_url = '';
 
-	/* translators: If there are characters in your language that are not supported
+	/*
+	 * translators: If there are characters in your language that are not supported
 	 * by Open Sans, translate this to 'off'. Do not translate into your own language.
 	 */
 	if ( 'off' !== _x( 'on', 'Open Sans font: on or off', 'twentytwelve' ) ) {
 		$subsets = 'latin,latin-ext';
 
-		/* translators: To add an additional Open Sans character subset specific to your language,
+		/*
+		 * translators: To add an additional Open Sans character subset specific to your language,
 		 * translate this to 'greek', 'cyrillic' or 'vietnamese'. Do not translate into your own language.
 		 */
 		$subset = _x( 'no-subset', 'Open Sans font: add new subset (greek, cyrillic, vietnamese)', 'twentytwelve' );
 
-		if ( 'cyrillic' == $subset ) {
+		if ( 'cyrillic' === $subset ) {
 			$subsets .= ',cyrillic,cyrillic-ext';
-		} elseif ( 'greek' == $subset ) {
+		} elseif ( 'greek' === $subset ) {
 			$subsets .= ',greek,greek-ext';
-		} elseif ( 'vietnamese' == $subset ) {
+		} elseif ( 'vietnamese' === $subset ) {
 			$subsets .= ',vietnamese';
 		}
 
@@ -308,7 +310,7 @@ function twentytwelve_wp_title( $title, $sep ) {
 
 	// Add a page number if necessary.
 	if ( ( $paged >= 2 || $page >= 2 ) && ! is_404() ) {
-		/* translators: %s: page number */
+		/* translators: %s: Page number. */
 		$title = "$title $sep " . sprintf( __( 'Page %s', 'twentytwelve' ), max( $paged, $page ) );
 	}
 
@@ -438,15 +440,24 @@ if ( ! function_exists( 'twentytwelve_comment' ) ) :
 						'<a href="%1$s"><time datetime="%2$s">%3$s</time></a>',
 						esc_url( get_comment_link( $comment->comment_ID ) ),
 						get_comment_time( 'c' ),
-						/* translators: 1: date, 2: time */
+						/* translators: 1: Date, 2: Time. */
 						sprintf( __( '%1$s at %2$s', 'twentytwelve' ), get_comment_date(), get_comment_time() )
 					);
 				?>
 				</header><!-- .comment-meta -->
 
+				<?php
+				$commenter = wp_get_current_commenter();
+				if ( $commenter['comment_author_email'] ) {
+					$moderation_note = __( 'Your comment is awaiting moderation.', 'twentytwelve' );
+				} else {
+					$moderation_note = __( 'Your comment is awaiting moderation. This is a preview, your comment will be visible after it has been approved.', 'twentytwelve' );
+				}
+				?>
+
 				<?php if ( '0' == $comment->comment_approved ) : ?>
-				<p class="comment-awaiting-moderation"><?php _e( 'Your comment is awaiting moderation.', 'twentytwelve' ); ?></p>
-			<?php endif; ?>
+				<p class="comment-awaiting-moderation"><?php echo $moderation_note; ?></p>
+				<?php endif; ?>
 
 				<section class="comment-content comment">
 				<?php comment_text(); ?>
@@ -471,7 +482,7 @@ if ( ! function_exists( 'twentytwelve_comment' ) ) :
 			</article><!-- #comment-## -->
 				<?php
 				break;
-		endswitch; // end comment_type check
+		endswitch; // End comment_type check.
 	}
 endif;
 
@@ -486,11 +497,11 @@ if ( ! function_exists( 'twentytwelve_entry_meta' ) ) :
 	 * @since Twenty Twelve 1.0
 	 */
 	function twentytwelve_entry_meta() {
-		// Translators: used between list items, there is a space after the comma.
+		/* translators: Used between list items, there is a space after the comma. */
 		$categories_list = get_the_category_list( __( ', ', 'twentytwelve' ) );
 
-		// Translators: used between list items, there is a space after the comma.
-		$tag_list = get_the_tag_list( '', __( ', ', 'twentytwelve' ) );
+		/* translators: Used between list items, there is a space after the comma. */
+		$tags_list = get_the_tag_list( '', __( ', ', 'twentytwelve' ) );
 
 		$date = sprintf(
 			'<a href="%1$s" title="%2$s" rel="bookmark"><time class="entry-date" datetime="%3$s">%4$s</time></a>',
@@ -503,26 +514,26 @@ if ( ! function_exists( 'twentytwelve_entry_meta' ) ) :
 		$author = sprintf(
 			'<span class="author vcard"><a class="url fn n" href="%1$s" title="%2$s" rel="author">%3$s</a></span>',
 			esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ),
-			/* translators: %s: author display name */
+			/* translators: %s: Author display name. */
 			esc_attr( sprintf( __( 'View all posts by %s', 'twentytwelve' ), get_the_author() ) ),
 			get_the_author()
 		);
 
-		if ( $tag_list ) {
-			/* translators: 1: category name, 2: tag name, 3: date, 4: author display name */
+		if ( $tags_list && ! is_wp_error( $tags_list ) ) {
+			/* translators: 1: Category name, 2: Tag name, 3: Date, 4: Author display name. */
 			$utility_text = __( 'This entry was posted in %1$s and tagged %2$s on %3$s<span class="by-author"> by %4$s</span>.', 'twentytwelve' );
 		} elseif ( $categories_list ) {
-			/* translators: 1: category name, 3: date, 4: author display name */
+			/* translators: 1: Category name, 3: Date, 4: Author display name. */
 			$utility_text = __( 'This entry was posted in %1$s on %3$s<span class="by-author"> by %4$s</span>.', 'twentytwelve' );
 		} else {
-			/* translators: 3: date, 4: author display name */
+			/* translators: 3: Date, 4: Author display name. */
 			$utility_text = __( 'This entry was posted on %3$s<span class="by-author"> by %4$s</span>.', 'twentytwelve' );
 		}
 
 		printf(
 			$utility_text,
 			$categories_list,
-			$tag_list,
+			$tags_list,
 			$date,
 			$author
 		);
@@ -567,7 +578,7 @@ function twentytwelve_body_class( $classes ) {
 	if ( empty( $background_image ) ) {
 		if ( empty( $background_color ) ) {
 			$classes[] = 'custom-background-empty';
-		} elseif ( in_array( $background_color, array( 'fff', 'ffffff' ) ) ) {
+		} elseif ( in_array( $background_color, array( 'fff', 'ffffff' ), true ) ) {
 			$classes[] = 'custom-background-white';
 		}
 	}
@@ -640,6 +651,7 @@ add_action( 'customize_register', 'twentytwelve_customize_register' );
  * Render the site title for the selective refresh partial.
  *
  * @since Twenty Twelve 2.0
+ *
  * @see twentytwelve_customize_register()
  *
  * @return void
@@ -652,6 +664,7 @@ function twentytwelve_customize_partial_blogname() {
  * Render the site tagline for the selective refresh partial.
  *
  * @since Twenty Twelve 2.0
+ *
  * @see twentytwelve_customize_register()
  *
  * @return void
@@ -695,7 +708,7 @@ if ( ! function_exists( 'wp_body_open' ) ) :
 	/**
 	 * Fire the wp_body_open action.
 	 *
-	 * Added for backwards compatibility to support pre 5.2.0 WordPress versions.
+	 * Added for backward compatibility to support pre-5.2.0 WordPress versions.
 	 *
 	 * @since Twenty Twelve 3.0
 	 */

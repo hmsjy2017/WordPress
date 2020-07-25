@@ -107,9 +107,11 @@
 			minutesOffset = 0,
 			numericKeys = [ 1, 4, 5, 6, 7, 10, 11 ];
 
-		// ES5 §15.9.4.2 states that the string should attempt to be parsed as a Date Time String Format string
-		// before falling back to any implementation-specific date parsing, so that’s what we do, even if native
-		// implementations could be faster.
+		/*
+		 * ES5 §15.9.4.2 states that the string should attempt to be parsed as a Date Time String Format string
+		 * before falling back to any implementation-specific date parsing, so that’s what we do, even if native
+		 * implementations could be faster.
+		 */
 		//              1 YYYY                2 MM       3 DD           4 HH    5 mm       6 ss        7 msec        8 Z 9 ±    10 tzHH    11 tzmm
 		if ( ( struct = /^(\d{4}|[+\-]\d{6})(?:-(\d{2})(?:-(\d{2}))?)?(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{3}))?)?(?:(Z)|([+\-])(\d{2})(?::(\d{2}))?)?)?$/.exec( date ) ) ) {
 
@@ -246,7 +248,7 @@
 			// Add post and edit endpoints as model args.
 			if ( _.includes( routeEndpoint.methods, 'POST' ) || _.includes( routeEndpoint.methods, 'PUT' ) ) {
 
-				// Add any non empty args, merging them into the args object.
+				// Add any non-empty args, merging them into the args object.
 				if ( ! _.isEmpty( routeEndpoint.args ) ) {
 
 					// Set as default if no args yet.
@@ -263,7 +265,7 @@
 				// Add GET method as model options.
 				if ( _.includes( routeEndpoint.methods, 'GET' ) ) {
 
-					// Add any non empty args, merging them into the defaults object.
+					// Add any non-empty args, merging them into the defaults object.
 					if ( ! _.isEmpty( routeEndpoint.args ) ) {
 
 						// Set as default if no defaults yet.
@@ -325,7 +327,7 @@
 				setDate: function( date, field ) {
 					var theField = field || 'date';
 
-					// Don't alter non parsable date fields.
+					// Don't alter non-parsable date fields.
 					if ( _.indexOf( parseableDates, theField ) < 0 ) {
 						return false;
 					}
@@ -346,7 +348,7 @@
 					var theField   = field || 'date',
 						theISODate = this.get( theField );
 
-					// Only get date fields and non null values.
+					// Only get date fields and non-null values.
 					if ( _.indexOf( parseableDates, theField ) < 0 || _.isNull( theISODate ) ) {
 						return false;
 					}
@@ -358,11 +360,11 @@
 			/**
 			 * Build a helper function to retrieve related model.
 			 *
-			 * @param  {string} parentModel      The parent model.
-			 * @param  {int}    modelId          The model ID if the object to request
-			 * @param  {string} modelName        The model name to use when constructing the model.
-			 * @param  {string} embedSourcePoint Where to check the embedds object for _embed data.
-			 * @param  {string} embedCheckField  Which model field to check to see if the model has data.
+			 * @param {string} parentModel      The parent model.
+			 * @param {int}    modelId          The model ID if the object to request
+			 * @param {string} modelName        The model name to use when constructing the model.
+			 * @param {string} embedSourcePoint Where to check the embedds object for _embed data.
+			 * @param {string} embedCheckField  Which model field to check to see if the model has data.
 			 *
 			 * @return {Deferred.promise}        A promise which resolves to the constructed model.
 			 */
@@ -412,12 +414,12 @@
 			/**
 			 * Build a helper to retrieve a collection.
 			 *
-			 * @param  {string} parentModel      The parent model.
-			 * @param  {string} collectionName   The name to use when constructing the collection.
-			 * @param  {string} embedSourcePoint Where to check the embedds object for _embed data.
-			 * @param  {string} embedIndex       An addiitonal optional index for the _embed data.
+			 * @param {string} parentModel      The parent model.
+			 * @param {string} collectionName   The name to use when constructing the collection.
+			 * @param {string} embedSourcePoint Where to check the embedds object for _embed data.
+			 * @param {string} embedIndex       An addiitonal optional index for the _embed data.
 			 *
-			 * @return {Deferred.promise}        A promise which resolves to the constructed collection.
+			 * @return {Deferred.promise} A promise which resolves to the constructed collection.
 			 */
 			buildCollectionGetter = function( parentModel, collectionName, embedSourcePoint, embedIndex ) {
 				/**
@@ -437,7 +439,7 @@
 				postId    = parentModel.get( 'id' );
 				embeddeds = parentModel.get( '_embedded' ) || {};
 
-				// Verify that we have a valid post id.
+				// Verify that we have a valid post ID.
 				if ( ! _.isNumber( postId ) || 0 === postId ) {
 					deferred.reject();
 					return deferred;
@@ -638,7 +640,7 @@
 				 */
 				setTagsWithCollection: function( tags ) {
 
-					// Pluck out the category ids.
+					// Pluck out the category IDs.
 					this.set( 'tags', tags.pluck( 'id' ) );
 					return this.save();
 				}
@@ -723,7 +725,7 @@
 				 */
 				setCategoriesWithCollection: function( categories ) {
 
-					// Pluck out the category ids.
+					// Pluck out the category IDs.
 					this.set( 'categories', categories.pluck( 'id' ) );
 					return this.save();
 				}
@@ -835,7 +837,7 @@
 			 * @param {string} method.
 			 * @param {Backbone.Model} model.
 			 * @param {{beforeSend}, *} options.
-			 * @returns {*}.
+			 * @return {*}.
 			 */
 			sync: function( method, model, options ) {
 				var beforeSend;
@@ -855,7 +857,7 @@
 				if ( _.isFunction( model.nonce ) && ! _.isEmpty( model.nonce() ) ) {
 					beforeSend = options.beforeSend;
 
-					// @todo enable option for jsonp endpoints
+					// @todo Enable option for jsonp endpoints.
 					// options.dataType = 'jsonp';
 
 					// Include the nonce with requests.
@@ -988,7 +990,7 @@
 			 * @param {string} method.
 			 * @param {Backbone.Model} model.
 			 * @param {{success}, *} options.
-			 * @returns {*}.
+			 * @return {*}.
 			 */
 			sync: function( method, model, options ) {
 				var beforeSend, success,
@@ -1063,7 +1065,7 @@
 			 * Fetches the next page of objects if a new page exists.
 			 *
 			 * @param {data: {page}} options.
-			 * @returns {*}.
+			 * @return {*}.
 			 */
 			more: function( options ) {
 				options = options || {};
@@ -1089,7 +1091,7 @@
 			/**
 			 * Returns true if there are more pages of objects available.
 			 *
-			 * @returns null|boolean.
+			 * @return {null|boolean}
 			 */
 			hasMore: function() {
 				if ( null === this.state.totalPages ||
@@ -1340,12 +1342,12 @@
 					} );
 				} else {
 
-					// This is a model without a parent in its route
+					// This is a model without a parent in its route.
 					modelClassName = wp.api.utils.capitalizeAndCamelCaseDashes( routeName );
 					modelClassName = mapping.models[ modelClassName ] || modelClassName;
 					loadingObjects.models[ modelClassName ] = wp.api.WPApiBaseModel.extend( {
 
-						// Function that returns a constructed url based on the id.
+						// Function that returns a constructed url based on the ID.
 						url: function() {
 							var url = routeModel.get( 'apiRoot' ) +
 								routeModel.get( 'versionString' ) +
@@ -1514,7 +1516,7 @@
 
 		if ( ! initializedDeferreds[ attributes.apiRoot + attributes.versionString ] ) {
 
-			// Look for an existing copy of this endpoint
+			// Look for an existing copy of this endpoint.
 			endpoint = wp.api.endpoints.findWhere( { 'apiRoot': attributes.apiRoot, 'versionString': attributes.versionString } );
 			if ( ! endpoint ) {
 				endpoint = new Endpoint( attributes );

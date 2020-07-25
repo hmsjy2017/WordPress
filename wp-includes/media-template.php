@@ -152,24 +152,18 @@ function wp_underscore_video_template() {
  * Prints the templates used in the media manager.
  *
  * @since 3.5.0
- *
- * @global bool $is_IE
  */
 function wp_print_media_templates() {
-	global $is_IE;
 	$class = 'media-modal wp-core-ui';
-	if ( $is_IE && strpos( $_SERVER['HTTP_USER_AGENT'], 'MSIE 7' ) !== false ) {
-		$class .= ' ie7';
-	}
 
 	$alt_text_description = sprintf(
-		/* translators: 1: link to tutorial, 2: additional link attributes, 3: accessibility text */
+		/* translators: 1: Link to tutorial, 2: Additional link attributes, 3: Accessibility text. */
 		__( '<a href="%1$s" %2$s>Describe the purpose of the image%3$s</a>. Leave empty if the image is purely decorative.' ),
 		esc_url( 'https://www.w3.org/WAI/tutorials/images/decision-tree' ),
 		'target="_blank" rel="noopener noreferrer"',
 		sprintf(
 			'<span class="screen-reader-text"> %s</span>',
-			/* translators: accessibility text */
+			/* translators: Accessibility text. */
 			__( '(opens in a new tab)' )
 		)
 	);
@@ -178,16 +172,29 @@ function wp_print_media_templates() {
 	<?php // Template for the media frame: used both in the media grid and in the media modal. ?>
 	<script type="text/html" id="tmpl-media-frame">
 		<div class="media-frame-title" id="media-frame-title"></div>
+		<h2 class="media-frame-menu-heading"><?php _ex( 'Actions', 'media modal menu actions' ); ?></h2>
+		<button type="button" class="button button-link media-frame-menu-toggle" aria-expanded="false">
+			<?php _ex( 'Menu', 'media modal menu' ); ?>
+			<span class="dashicons dashicons-arrow-down" aria-hidden="true"></span>
+		</button>
 		<div class="media-frame-menu"></div>
-		<div class="media-frame-router"></div>
-		<div class="media-frame-content"></div>
+		<div class="media-frame-tab-panel">
+			<div class="media-frame-router"></div>
+			<div class="media-frame-content"></div>
+		</div>
+		<h2 class="media-frame-actions-heading screen-reader-text">
+		<?php
+			/* translators: Accessibility text. */
+			_e( 'Selected media actions' );
+		?>
+		</h2>
 		<div class="media-frame-toolbar"></div>
 		<div class="media-frame-uploader"></div>
 	</script>
 
 	<?php // Template for the media modal. ?>
 	<script type="text/html" id="tmpl-media-modal">
-		<div tabindex="0" class="<?php echo $class; ?>" role="dialog" aria-modal="true" aria-labelledby="media-frame-title">
+		<div tabindex="0" class="<?php echo $class; ?>" role="dialog" aria-labelledby="media-frame-title">
 			<# if ( data.hasCloseButton ) { #>
 				<button type="button" class="media-modal-close"><span class="media-modal-icon"><span class="screen-reader-text"><?php _e( 'Close dialog' ); ?></span></span></button>
 			<# } #>
@@ -222,8 +229,16 @@ function wp_print_media_templates() {
 		<# } #>
 		<?php if ( ! _device_can_upload() ) : ?>
 			<div class="upload-ui">
-				<h2 class="upload-instructions"><?php _e( 'Your browseer cannot upload files' ); ?></h2>
-				<p><?php printf( __( 'The web browser on your device cannot be used to upload files. You may be able to use the <a href="%s">native app for your device</a> instead.' ), 'https://apps.wordpress.org/' ); ?></p>
+				<h2 class="upload-instructions"><?php _e( 'Your browser cannot upload files' ); ?></h2>
+				<p>
+				<?php
+					printf(
+						/* translators: %s: https://apps.wordpress.org/ */
+						__( 'The web browser on your device cannot be used to upload files. You may be able to use the <a href="%s">native app for your device</a> instead.' ),
+						'https://apps.wordpress.org/'
+					);
+				?>
+				</p>
 			</div>
 		<?php elseif ( is_multisite() && ! is_upload_space_available() ) : ?>
 			<div class="upload-ui">
@@ -266,14 +281,18 @@ function wp_print_media_templates() {
 
 				<p class="max-upload-size">
 				<?php
-					printf( __( 'Maximum upload file size: %s.' ), esc_html( size_format( $max_upload_size ) ) );
+					printf(
+						/* translators: %s: Maximum allowed file size. */
+						__( 'Maximum upload file size: %s.' ),
+						esc_html( size_format( $max_upload_size ) )
+					);
 				?>
 				</p>
 
 				<# if ( data.suggestedWidth && data.suggestedHeight ) { #>
 					<p class="suggested-dimensions">
 						<?php
-							/* translators: 1: suggested width number, 2: suggested height number. */
+							/* translators: 1: Suggested width number, 2: Suggested height number. */
 							printf( __( 'Suggested image dimensions: %1$s by %2$s pixels.' ), '{{data.suggestedWidth}}', '{{data.suggestedHeight}}' );
 						?>
 					</p>
@@ -293,7 +312,7 @@ function wp_print_media_templates() {
 		<a href="<?php echo esc_url( add_query_arg( 'mode', 'list', $_SERVER['REQUEST_URI'] ) ); ?>" class="view-list">
 			<span class="screen-reader-text"><?php _e( 'List View' ); ?></span>
 		</a>
-		<a href="<?php echo esc_url( add_query_arg( 'mode', 'grid', $_SERVER['REQUEST_URI'] ) ); ?>" class="view-grid current">
+		<a href="<?php echo esc_url( add_query_arg( 'mode', 'grid', $_SERVER['REQUEST_URI'] ) ); ?>" class="view-grid current" aria-current="page">
 			<span class="screen-reader-text"><?php _e( 'Grid View' ); ?></span>
 		</a>
 	</script>
@@ -395,10 +414,15 @@ function wp_print_media_templates() {
 					<# if ( data.width && data.height ) { #>
 						<div class="dimensions"><strong><?php _e( 'Dimensions:' ); ?></strong>
 							<?php
-							/* translators: 1: a number of pixels wide, 2: a number of pixels tall. */
+							/* translators: 1: A number of pixels wide, 2: A number of pixels tall. */
 							printf( __( '%1$s by %2$s pixels' ), '{{ data.width }}', '{{ data.height }}' );
 							?>
 						</div>
+					<# } #>
+
+					<# if ( data.originalImageURL && data.originalImageName ) { #>
+						<?php _e( 'Original image:' ); ?>
+						<a href="{{ data.originalImageURL }}">{{data.originalImageName}}</a>
 					<# } #>
 				<# } #>
 
@@ -476,8 +500,12 @@ function wp_print_media_templates() {
 					</span>
 				<# } #>
 				<span class="setting" data-setting="url">
-					<label for="attachment-details-two-column-copy-link" class="name"><?php _e( 'Copy Link' ); ?></label>
-					<input type="text" id="attachment-details-two-column-copy-link" value="{{ data.url }}" readonly />
+					<label for="attachment-details-two-column-copy-link" class="name"><?php _e( 'File URL:' ); ?></label>
+					<input type="text" class="attachment-details-copy-link" id="attachment-details-two-column-copy-link" value="{{ data.url }}" readonly />
+					<span class="copy-to-clipboard-container">
+						<button type="button" class="button button-small copy-attachment-url" data-clipboard-target="#attachment-details-two-column-copy-link"><?php _e( 'Copy URL' ); ?></button>
+						<span class="success hidden" aria-hidden="true"><?php _e( 'Copied!' ); ?></span>
+					</span>
 				</span>
 				<div class="attachment-compat"></div>
 			</div>
@@ -495,7 +523,7 @@ function wp_print_media_templates() {
 							<button type="button" class="button-link trash-attachment"><?php _e( 'Move to Trash' ); ?></button>
 						<# } #>
 					<?php else : ?>
-						<button type="button" class="button-link delete-attachment"><?php _e( 'Delete Permanently' ); ?></button>
+						<button type="button" class="button-link delete-attachment"><?php _e( 'Delete permanently' ); ?></button>
 					<?php endif; ?>
 				<# } #>
 			</div>
@@ -585,10 +613,15 @@ function wp_print_media_templates() {
 					<# if ( data.width && data.height ) { #>
 						<div class="dimensions">
 							<?php
-							/* translators: 1: a number of pixels wide, 2: a number of pixels tall. */
+							/* translators: 1: A number of pixels wide, 2: A number of pixels tall. */
 							printf( __( '%1$s by %2$s pixels' ), '{{ data.width }}', '{{ data.height }}' );
 							?>
 						</div>
+					<# } #>
+
+					<# if ( data.originalImageURL && data.originalImageName ) { #>
+						<?php _e( 'Original image:' ); ?>
+						<a href="{{ data.originalImageURL }}">{{data.originalImageName}}</a>
 					<# } #>
 
 					<# if ( data.can.save && data.sizes ) { #>
@@ -611,7 +644,7 @@ function wp_print_media_templates() {
 						<button type="button" class="button-link trash-attachment"><?php _e( 'Move to Trash' ); ?></button>
 					<# } #>
 					<?php else : ?>
-						<button type="button" class="button-link delete-attachment"><?php _e( 'Delete Permanently' ); ?></button>
+						<button type="button" class="button-link delete-attachment"><?php _e( 'Delete permanently' ); ?></button>
 					<?php endif; ?>
 				<# } #>
 
@@ -658,8 +691,12 @@ function wp_print_media_templates() {
 			<textarea id="attachment-details-description" {{ maybeReadOnly }}>{{ data.description }}</textarea>
 		</span>
 		<span class="setting" data-setting="url">
-			<label for="attachment-details-copy-link" class="name"><?php _e( 'Copy Link' ); ?></label>
-			<input type="text" id="attachment-details-copy-link" value="{{ data.url }}" readonly />
+			<label for="attachment-details-copy-link" class="name"><?php _e( 'File URL:' ); ?></label>
+			<input type="text" class="attachment-details-copy-link" id="attachment-details-copy-link" value="{{ data.url }}" readonly />
+			<div class="copy-to-clipboard-container">
+				<button type="button" class="button button-small copy-attachment-url" data-clipboard-target="#attachment-details-copy-link"><?php _e( 'Copy URL' ); ?></button>
+				<span class="success hidden" aria-hidden="true"><?php _e( 'Copied!' ); ?></span>
+			</div>
 		</span>
 	</script>
 
@@ -803,15 +840,15 @@ function wp_print_media_templates() {
 					data-user-setting="urlbutton"
 				<# } #>>
 
-				<option value="post" <# if ( ! wp.media.galleryDefaults.link || 'post' == wp.media.galleryDefaults.link ) {
+				<option value="post" <# if ( ! wp.media.galleryDefaults.link || 'post' === wp.media.galleryDefaults.link ) {
 					#>selected="selected"<# }
 				#>>
 					<?php esc_html_e( 'Attachment Page' ); ?>
 				</option>
-				<option value="file" <# if ( 'file' == wp.media.galleryDefaults.link ) { #>selected="selected"<# } #>>
+				<option value="file" <# if ( 'file' === wp.media.galleryDefaults.link ) { #>selected="selected"<# } #>>
 					<?php esc_html_e( 'Media File' ); ?>
 				</option>
-				<option value="none" <# if ( 'none' == wp.media.galleryDefaults.link ) { #>selected="selected"<# } #>>
+				<option value="none" <# if ( 'none' === wp.media.galleryDefaults.link ) { #>selected="selected"<# } #>>
 					<?php esc_html_e( 'None' ); ?>
 				</option>
 			</select>
@@ -1175,7 +1212,7 @@ function wp_print_media_templates() {
 					}
 				#>
 				<span class="setting">
-					<label for="audio-details-source" class="name"><?php _e( 'caca URL' ); ?></label>
+					<label for="audio-details-source" class="name"><?php _e( 'URL' ); ?></label>
 					<input type="text" id="audio-details-source" readonly data-setting="src" value="{{ data.model.src }}" />
 					<button type="button" class="button-link remove-setting"><?php _e( 'Remove audio source' ); ?></button>
 				</span>
@@ -1337,11 +1374,22 @@ function wp_print_media_templates() {
 					var content = '';
 					if ( ! _.isEmpty( data.model.content ) ) {
 						var tracks = jQuery( data.model.content ).filter( 'track' );
-						_.each( tracks.toArray(), function (track) {
+						_.each( tracks.toArray(), function( track, index ) {
 							content += track.outerHTML; #>
-						<label for="video-details-track" class="name"><?php _e( 'Tracks (subtitles, captions, descriptions, chapters, or metadata)' ); ?></label>
-						<input class="content-track" type="text" id="video-details-track" readonly value="{{ track.outerHTML }}" />
-						<button type="button" class="button-link remove-setting remove-track"><?php _ex( 'Remove video track', 'media' ); ?></button>
+						<label for="video-details-track-{{ index }}" class="name"><?php _e( 'Tracks (subtitles, captions, descriptions, chapters, or metadata)' ); ?></label>
+						<input class="content-track" type="text" id="video-details-track-{{ index }}" aria-describedby="video-details-track-desc-{{ index }}" value="{{ track.outerHTML }}" />
+						<span class="description" id="video-details-track-desc-{{ index }}">
+						<?php
+							printf(
+								/* translators: 1: "srclang" HTML attribute, 2: "label" HTML attribute, 3: "kind" HTML attribute. */
+								__( 'The %1$s, %2$s, and %3$s values can be edited to set the video track language and kind.' ),
+								'srclang',
+								'label',
+								'kind'
+							);
+						?>
+						</span>
+						<button type="button" class="button-link remove-setting remove-track"><?php _ex( 'Remove video track', 'media' ); ?></button><br/>
 						<# } ); #>
 					<# } else { #>
 					<span class="name"><?php _e( 'Tracks (subtitles, captions, descriptions, chapters, or metadata)' ); ?></span><br />
@@ -1400,7 +1448,7 @@ function wp_print_media_templates() {
 			<div class="favicon">
 				<img id="preview-favicon" src="{{ data.url }}" alt="<?php esc_attr_e( 'Preview as a browser icon' ); ?>"/>
 			</div>
-			<span class="browser-title" aria-hidden="true"><?php bloginfo( 'name' ); ?></span>
+			<span class="browser-title" aria-hidden="true"><# print( '<?php bloginfo( 'name' ); ?>' ) #></span>
 		</div>
 
 		<strong aria-hidden="true"><?php _e( 'As an app icon' ); ?></strong>

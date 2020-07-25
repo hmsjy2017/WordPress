@@ -22,14 +22,14 @@ get_header(); ?>
 			<header class="archive-header">
 				<h1 class="archive-title">
 				<?php
-				/* translators: %s: post format name */
+				/* translators: %s: Post format name. */
 				printf( __( '%s Archives', 'twentythirteen' ), '<span>' . esc_html( get_post_format_string( get_post_format() ) ) . '</span>' );
 				?>
 				</h1>
 			</header><!-- .archive-header -->
 
-			<?php /* The loop */ ?>
 			<?php
+			// Start the loop.
 			while ( have_posts() ) :
 				the_post();
 				?>

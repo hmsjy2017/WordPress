@@ -106,6 +106,8 @@ if ( ! function_exists( 'twentysixteen_setup' ) ) :
 				'comment-list',
 				'gallery',
 				'caption',
+				'script',
+				'style',
 			)
 		);
 
@@ -214,7 +216,7 @@ if ( ! function_exists( 'twentysixteen_setup' ) ) :
 		// Indicate widget sidebars can use selective refresh in the Customizer.
 		add_theme_support( 'customize-selective-refresh-widgets' );
 	}
-endif; // twentysixteen_setup
+endif; // twentysixteen_setup()
 add_action( 'after_setup_theme', 'twentysixteen_setup' );
 
 /**
@@ -236,9 +238,9 @@ add_action( 'after_setup_theme', 'twentysixteen_content_width', 0 );
  *
  * @since Twenty Sixteen 1.6
  *
- * @param array  $urls           URLs to print for resource hints.
- * @param string $relation_type  The relation type the URLs are printed.
- * @return array $urls           URLs to print for resource hints.
+ * @param array  $urls          URLs to print for resource hints.
+ * @param string $relation_type The relation type the URLs are printed.
+ * @return array URLs to print for resource hints.
  */
 function twentysixteen_resource_hints( $urls, $relation_type ) {
 	if ( wp_style_is( 'twentysixteen-fonts', 'queue' ) && 'preconnect' === $relation_type ) {
@@ -313,17 +315,26 @@ if ( ! function_exists( 'twentysixteen_fonts_url' ) ) :
 		$fonts     = array();
 		$subsets   = 'latin,latin-ext';
 
-		/* translators: If there are characters in your language that are not supported by Merriweather, translate this to 'off'. Do not translate into your own language. */
+		/*
+		 * translators: If there are characters in your language that are not supported
+		 * by Merriweather, translate this to 'off'. Do not translate into your own language.
+		 */
 		if ( 'off' !== _x( 'on', 'Merriweather font: on or off', 'twentysixteen' ) ) {
 			$fonts[] = 'Merriweather:400,700,900,400italic,700italic,900italic';
 		}
 
-		/* translators: If there are characters in your language that are not supported by Montserrat, translate this to 'off'. Do not translate into your own language. */
+		/*
+		 * translators: If there are characters in your language that are not supported
+		 * by Montserrat, translate this to 'off'. Do not translate into your own language.
+		 */
 		if ( 'off' !== _x( 'on', 'Montserrat font: on or off', 'twentysixteen' ) ) {
 			$fonts[] = 'Montserrat:400,700';
 		}
 
-		/* translators: If there are characters in your language that are not supported by Inconsolata, translate this to 'off'. Do not translate into your own language. */
+		/*
+		 * translators: If there are characters in your language that are not supported
+		 * by Inconsolata, translate this to 'off'. Do not translate into your own language.
+		 */
 		if ( 'off' !== _x( 'on', 'Inconsolata font: on or off', 'twentysixteen' ) ) {
 			$fonts[] = 'Inconsolata:400';
 		}

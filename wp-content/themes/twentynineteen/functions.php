@@ -6,7 +6,7 @@
  *
  * @package WordPress
  * @subpackage Twenty_Nineteen
- * @since 1.0.0
+ * @since Twenty Nineteen 1.0
  */
 
 /**
@@ -74,6 +74,8 @@ if ( ! function_exists( 'twentynineteen_setup' ) ) :
 				'comment-list',
 				'gallery',
 				'caption',
+				'script',
+				'style',
 			)
 		);
 
@@ -143,12 +145,12 @@ if ( ! function_exists( 'twentynineteen_setup' ) ) :
 			'editor-color-palette',
 			array(
 				array(
-					'name'  => __( 'Primary', 'twentynineteen' ),
+					'name'  => 'default' === get_theme_mod( 'primary_color' ) ? __( 'Blue', 'twentynineteen' ) : null,
 					'slug'  => 'primary',
 					'color' => twentynineteen_hsl_hex( 'default' === get_theme_mod( 'primary_color' ) ? 199 : get_theme_mod( 'primary_color_hue', 199 ), 100, 33 ),
 				),
 				array(
-					'name'  => __( 'Secondary', 'twentynineteen' ),
+					'name'  => 'default' === get_theme_mod( 'primary_color' ) ? __( 'Dark Blue', 'twentynineteen' ) : null,
 					'slug'  => 'secondary',
 					'color' => twentynineteen_hsl_hex( 'default' === get_theme_mod( 'primary_color' ) ? 199 : get_theme_mod( 'primary_color_hue', 199 ), 100, 23 ),
 				),
@@ -303,14 +305,19 @@ require get_template_directory() . '/classes/class-twentynineteen-svg-icons.php'
 require get_template_directory() . '/classes/class-twentynineteen-walker-comment.php';
 
 /**
- * Enhance the theme by hooking into WordPress.
+ * Common theme functions.
  */
-require get_template_directory() . '/inc/template-functions.php';
+require get_template_directory() . '/inc/helper-functions.php';
 
 /**
  * SVG Icons related functions.
  */
 require get_template_directory() . '/inc/icon-functions.php';
+
+/**
+ * Enhance the theme by hooking into WordPress.
+ */
+require get_template_directory() . '/inc/template-functions.php';
 
 /**
  * Custom template tags for the theme.

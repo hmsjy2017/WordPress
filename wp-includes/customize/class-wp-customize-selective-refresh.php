@@ -58,11 +58,11 @@ final class WP_Customize_Selective_Refresh {
 	 *
 	 * @since 4.5.0
 	 *
-	 * @param WP_Customize_Manager $manager Manager instance.
+	 * @param WP_Customize_Manager $manager Customizer bootstrap instance.
 	 */
 	public function __construct( WP_Customize_Manager $manager ) {
 		$this->manager = $manager;
-		require_once( ABSPATH . WPINC . '/customize/class-wp-customize-partial.php' );
+		require_once ABSPATH . WPINC . '/customize/class-wp-customize-partial.php';
 
 		add_action( 'customize_preview_init', array( $this, 'init_preview' ) );
 	}
@@ -208,7 +208,7 @@ final class WP_Customize_Selective_Refresh {
 		);
 
 		// Export data to JS.
-		echo sprintf( '<script>var _customizePartialRefreshExports = %s;</script>', wp_json_encode( $exports ) );
+		printf( '<script>var _customizePartialRefreshExports = %s;</script>', wp_json_encode( $exports ) );
 	}
 
 	/**

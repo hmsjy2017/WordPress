@@ -190,7 +190,7 @@ class Featured_Content {
 	}
 
 	/**
-	 * Delete featured content ids transient.
+	 * Delete featured content IDs transient.
 	 *
 	 * Hooks in the "save_post" action.
 	 *
@@ -233,7 +233,7 @@ class Featured_Content {
 			return;
 		}
 
-		// We need to respect post ids already in the blacklist.
+		// We need to respect post IDs already in the exclude list.
 		$post__not_in = $query->get( 'post__not_in' );
 
 		if ( ! empty( $post__not_in ) ) {
@@ -292,7 +292,7 @@ class Featured_Content {
 		}
 
 		// We only want to hide the featured tag.
-		if ( ! in_array( 'post_tag', $taxonomies ) ) {
+		if ( ! in_array( 'post_tag', $taxonomies, true ) ) {
 			return $terms;
 		}
 
@@ -302,7 +302,7 @@ class Featured_Content {
 		}
 
 		// Bail if term objects are unavailable.
-		if ( 'all' != $args['fields'] ) {
+		if ( 'all' !== $args['fields'] ) {
 			return $terms;
 		}
 
@@ -339,7 +339,7 @@ class Featured_Content {
 		}
 
 		// Make sure we are in the correct taxonomy.
-		if ( 'post_tag' != $taxonomy ) {
+		if ( 'post_tag' !== $taxonomy ) {
 			return $terms;
 		}
 
@@ -380,7 +380,7 @@ class Featured_Content {
 			array(
 				'title'          => __( 'Featured Content', 'twentyfourteen' ),
 				'description'    => sprintf(
-					/* translators: 1: featured tag editor URL, 2: post editor URL */
+					/* translators: 1: Featured tag editor URL, 2: Post editor URL. */
 					__( 'Use a <a href="%1$s">tag</a> to feature your posts. If no posts match the tag, <a href="%2$s">sticky posts</a> will be displayed instead.', 'twentyfourteen' ),
 					esc_url( add_query_arg( 'tag', _x( 'featured', 'featured content default tag slug', 'twentyfourteen' ), admin_url( 'edit.php' ) ) ),
 					admin_url( 'edit.php?show_sticky=1' )
@@ -466,7 +466,7 @@ class Featured_Content {
 		$options = wp_parse_args( $saved, $defaults );
 		$options = array_intersect_key( $options, $defaults );
 
-		if ( 'all' != $key ) {
+		if ( 'all' !== $key ) {
 			return isset( $options[ $key ] ) ? $options[ $key ] : false;
 		}
 
@@ -508,7 +508,7 @@ class Featured_Content {
 
 		$output['hide-tag'] = isset( $input['hide-tag'] ) && $input['hide-tag'] ? 1 : 0;
 
-		// Delete the featured post ids transient.
+		// Delete the featured post IDs transient.
 		self::delete_transient();
 
 		return $output;

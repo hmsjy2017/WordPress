@@ -4,7 +4,7 @@
  *
  * @package WordPress
  * @subpackage Twenty_Seventeen
- * @since 1.0
+ * @since Twenty Seventeen 1.0
  */
 
 /**
@@ -138,7 +138,7 @@ function twentyseventeen_customize_register( $wp_customize ) {
 		$wp_customize->add_control(
 			'panel_' . $i,
 			array(
-				/* translators: %d is the front page section number */
+				/* translators: %d: The front page section number. */
 				'label'           => sprintf( __( 'Front Page Section %d Content', 'twentyseventeen' ), $i ),
 				'description'     => ( 1 !== $i ? '' : __( 'Select pages to feature in each area from the dropdowns. Add an image to a section by setting a featured image in the page editor. Empty sections will not be displayed.', 'twentyseventeen' ) ),
 				'section'         => 'theme_options',
@@ -197,6 +197,7 @@ function twentyseventeen_sanitize_colorscheme( $input ) {
  * Render the site title for the selective refresh partial.
  *
  * @since Twenty Seventeen 1.0
+ *
  * @see twentyseventeen_customize_register()
  *
  * @return void
@@ -209,6 +210,7 @@ function twentyseventeen_customize_partial_blogname() {
  * Render the site tagline for the selective refresh partial.
  *
  * @since Twenty Seventeen 1.0
+ *
  * @see twentyseventeen_customize_register()
  *
  * @return void

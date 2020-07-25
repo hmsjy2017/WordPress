@@ -7,10 +7,10 @@
  */
 
 /** WordPress Administration Bootstrap */
-require_once( dirname( __FILE__ ) . '/admin.php' );
+require_once __DIR__ . '/admin.php';
 
 /** WordPress Translation Installation API */
-require_once( ABSPATH . 'wp-admin/includes/translation-install.php' );
+require_once ABSPATH . 'wp-admin/includes/translation-install.php';
 
 if ( ! current_user_can( 'manage_options' ) ) {
 	wp_die( __( 'Sorry, you are not allowed to manage options for this site.' ) );
@@ -18,7 +18,7 @@ if ( ! current_user_can( 'manage_options' ) ) {
 
 $title       = __( 'General Settings' );
 $parent_file = 'options-general.php';
-/* translators: date and time format for exact current time, mainly about timezones, see https://secure.php.net/date */
+/* translators: Date and time format for exact current time, mainly about timezones, see https://www.php.net/date */
 $timezone_format = _x( 'Y-m-d H:i:s', 'timezone date format' );
 
 add_action( 'admin_head', 'options_general_add_js' );
@@ -49,7 +49,7 @@ get_current_screen()->set_help_sidebar(
 	'<p>' . __( '<a href="https://wordpress.org/support/">Support</a>' ) . '</p>'
 );
 
-include( ABSPATH . 'wp-admin/admin-header.php' );
+require_once ABSPATH . 'wp-admin/admin-header.php';
 ?>
 
 <div class="wrap">
@@ -95,7 +95,7 @@ if ( ! is_multisite() ) {
 <p class="description" id="home-description">
 		<?php
 		printf(
-			/* translators: %s: Documentation URL */
+			/* translators: %s: Documentation URL. */
 			__( 'Enter the address here if you <a href="%s">want your site home page to be different from your WordPress installation directory</a>.' ),
 			__( 'https://wordpress.org/support/article/giving-wordpress-its-own-directory/' )
 		);
@@ -110,16 +110,16 @@ if ( ! is_multisite() ) {
 <tr>
 <th scope="row"><label for="new_admin_email"><?php _e( 'Administration Email Address' ); ?></label></th>
 <td><input name="new_admin_email" type="email" id="new_admin_email" aria-describedby="new-admin-email-description" value="<?php form_option( 'admin_email' ); ?>" class="regular-text ltr" />
-<p class="description" id="new-admin-email-description"><?php _e( 'This address is used for admin purposes. If you change this we will send you an email at your new address to confirm it. <strong>The new address will not become active until confirmed.</strong>' ); ?></p>
+<p class="description" id="new-admin-email-description"><?php _e( 'This address is used for admin purposes. If you change this, we will send you an email at your new address to confirm it. <strong>The new address will not become active until confirmed.</strong>' ); ?></p>
 <?php
 $new_admin_email = get_option( 'new_admin_email' );
-if ( $new_admin_email && $new_admin_email != get_option( 'admin_email' ) ) :
+if ( $new_admin_email && get_option( 'admin_email' ) !== $new_admin_email ) :
 	?>
 	<div class="updated inline">
 	<p>
 	<?php
 		printf(
-			/* translators: %s: new admin email */
+			/* translators: %s: New admin email. */
 			__( 'There is a pending change of the admin email to %s.' ),
 			'<code>' . esc_html( $new_admin_email ) . '</code>'
 		);
@@ -157,7 +157,7 @@ if ( $new_admin_email && $new_admin_email != get_option( 'admin_email' ) ) :
 
 $languages    = get_available_languages();
 $translations = wp_get_available_translations();
-if ( ! is_multisite() && defined( 'WPLANG' ) && '' !== WPLANG && 'en_US' !== WPLANG && ! in_array( WPLANG, $languages ) ) {
+if ( ! is_multisite() && defined( 'WPLANG' ) && '' !== WPLANG && 'en_US' !== WPLANG && ! in_array( WPLANG, $languages, true ) ) {
 	$languages[] = WPLANG;
 }
 if ( ! empty( $languages ) || ! empty( $translations ) ) {
@@ -167,7 +167,7 @@ if ( ! empty( $languages ) || ! empty( $translations ) ) {
 		<td>
 			<?php
 			$locale = get_locale();
-			if ( ! in_array( $locale, $languages ) ) {
+			if ( ! in_array( $locale, $languages, true ) ) {
 				$locale = '';
 			}
 
@@ -183,8 +183,13 @@ if ( ! empty( $languages ) || ! empty( $translations ) ) {
 			);
 
 			// Add note about deprecated WPLANG constant.
-			if ( defined( 'WPLANG' ) && ( '' !== WPLANG ) && $locale !== WPLANG ) {
-				_deprecated_argument( 'define()', '4.0.0', sprintf( __( 'The %1$s constant in your %2$s file is no longer needed.' ), 'WPLANG', 'wp-config.php' ) );
+			if ( defined( 'WPLANG' ) && ( '' !== WPLANG ) && WPLANG !== $locale ) {
+				_deprecated_argument(
+					'define()',
+					'4.0.0',
+					/* translators: 1: WPLANG, 2: wp-config.php */
+					sprintf( __( 'The %1$s constant in your %2$s file is no longer needed.' ), 'WPLANG', 'wp-config.php' )
+				);
 			}
 			?>
 		</td>
@@ -204,7 +209,7 @@ if ( false !== strpos( $tzstring, 'Etc/GMT' ) ) {
 	$tzstring = '';
 }
 
-if ( empty( $tzstring ) ) { // Create a UTC+- zone if no timezone string exists
+if ( empty( $tzstring ) ) { // Create a UTC+- zone if no timezone string exists.
 	$check_zone_info = false;
 	if ( 0 == $current_offset ) {
 		$tzstring = 'UTC+0';
@@ -223,15 +228,22 @@ if ( empty( $tzstring ) ) { // Create a UTC+- zone if no timezone string exists
 	<?php echo wp_timezone_choice( $tzstring, get_user_locale() ); ?>
 </select>
 
-<p class="description" id="timezone-description"><?php _e( 'Choose either a city in the same timezone as you or a UTC timezone offset.' ); ?></p>
+<p class="description" id="timezone-description">
+<?php
+	printf(
+		/* translators: %s: UTC abbreviation */
+		__( 'Choose either a city in the same timezone as you or a %s (Coordinated Universal Time) time offset.' ),
+		'<abbr>UTC</abbr>'
+	);
+	?>
+</p>
 
 <p class="timezone-info">
 	<span id="utc-time">
 	<?php
-		/* translators: 1: UTC abbreviation, 2: UTC time */
 		printf(
-			__( 'Universal time (%1$s) is %2$s.' ),
-			'<abbr>' . __( 'UTC' ) . '</abbr>',
+			/* translators: %s: UTC time. */
+			__( 'Universal time is %s.' ),
 			'<code>' . date_i18n( $timezone_format, false, true ) . '</code>'
 		);
 		?>
@@ -239,8 +251,8 @@ if ( empty( $tzstring ) ) { // Create a UTC+- zone if no timezone string exists
 <?php if ( get_option( 'timezone_string' ) || ! empty( $current_offset ) ) : ?>
 	<span id="local-time">
 	<?php
-		/* translators: %s: local time */
 		printf(
+			/* translators: %s: Local time. */
 			__( 'Local time is %s.' ),
 			'<code>' . date_i18n( $timezone_format ) . '</code>'
 		);
@@ -264,34 +276,20 @@ if ( empty( $tzstring ) ) { // Create a UTC+- zone if no timezone string exists
 	?>
 	<br />
 	<?php
-	$allowed_zones = timezone_identifiers_list();
+	if ( in_array( $tzstring, timezone_identifiers_list(), true ) ) {
+		$transitions = timezone_transitions_get( timezone_open( $tzstring ), time() );
 
-	if ( in_array( $tzstring, $allowed_zones ) ) {
-		$found                   = false;
-		$date_time_zone_selected = new DateTimeZone( $tzstring );
-		$tz_offset               = timezone_offset_get( $date_time_zone_selected, date_create() );
-		$right_now               = time();
-		foreach ( timezone_transitions_get( $date_time_zone_selected ) as $tr ) {
-			if ( $tr['ts'] > $right_now ) {
-				$found = true;
-				break;
-			}
-		}
-
-		if ( $found ) {
+		// 0 index is the state at current time, 1 index is the next transition, if any.
+		if ( ! empty( $transitions[1] ) ) {
 			echo ' ';
-			$message = $tr['isdst'] ?
-				/* translators: %s: date and time  */
+			$message = $transitions[1]['isdst'] ?
+				/* translators: %s: Date and time. */
 				__( 'Daylight saving time begins on: %s.' ) :
-				/* translators: %s: date and time  */
+				/* translators: %s: Date and time. */
 				__( 'Standard time begins on: %s.' );
-			// Add the difference between the current offset and the new offset to ts to get the correct transition time from date_i18n().
 			printf(
 				$message,
-				'<code>' . date_i18n(
-					__( 'F j, Y' ) . ' ' . __( 'g:i a' ),
-					$tr['ts'] + ( $tz_offset - $tr['offset'] )
-				) . '</code>'
+				'<code>' . wp_date( __( 'F j, Y' ) . ' ' . __( 'g:i a' ), $transitions[1]['ts'] ) . '</code>'
 			);
 		} else {
 			_e( 'This timezone does not observe daylight saving time.' );
@@ -323,7 +321,7 @@ if ( empty( $tzstring ) ) { // Create a UTC+- zone if no timezone string exists
 
 foreach ( $date_formats as $format ) {
 	echo "\t<label><input type='radio' name='date_format' value='" . esc_attr( $format ) . "'";
-	if ( get_option( 'date_format' ) === $format ) { // checked() uses "==" rather than "==="
+	if ( get_option( 'date_format' ) === $format ) { // checked() uses "==" rather than "===".
 		echo " checked='checked'";
 		$custom = false;
 	}
@@ -360,7 +358,7 @@ foreach ( $date_formats as $format ) {
 
 foreach ( $time_formats as $format ) {
 	echo "\t<label><input type='radio' name='time_format' value='" . esc_attr( $format ) . "'";
-	if ( get_option( 'time_format' ) === $format ) { // checked() uses "==" rather than "==="
+	if ( get_option( 'time_format' ) === $format ) { // checked() uses "==" rather than "===".
 		echo " checked='checked'";
 		$custom = false;
 	}
@@ -407,4 +405,4 @@ endfor;
 
 </div>
 
-<?php include( ABSPATH . 'wp-admin/admin-footer.php' ); ?>
+<?php require_once ABSPATH . 'wp-admin/admin-footer.php'; ?>

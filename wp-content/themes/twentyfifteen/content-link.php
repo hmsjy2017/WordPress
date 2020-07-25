@@ -28,7 +28,7 @@
 		<?php
 			the_content(
 				sprintf(
-					/* translators: %s: Name of current post */
+					/* translators: %s: Post title. */
 					__( 'Continue reading %s', 'twentyfifteen' ),
 					the_title( '<span class="screen-reader-text">', '</span>', false )
 				)
@@ -49,7 +49,7 @@
 	<!-- .entry-content -->
 
 	<?php
-		// Author bio.
+	// Author bio.
 	if ( is_single() && get_the_author_meta( 'description' ) ) :
 		get_template_part( 'author-bio' );
 		endif;

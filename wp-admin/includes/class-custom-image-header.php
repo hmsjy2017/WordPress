@@ -75,13 +75,13 @@ class Custom_Image_Header {
 			return;
 		}
 
-		add_action( "admin_print_scripts-$page", array( $this, 'js_includes' ) );
-		add_action( "admin_print_styles-$page", array( $this, 'css_includes' ) );
-		add_action( "admin_head-$page", array( $this, 'help' ) );
-		add_action( "admin_head-$page", array( $this, 'take_action' ), 50 );
-		add_action( "admin_head-$page", array( $this, 'js' ), 50 );
+		add_action( "admin_print_scripts-{$page}", array( $this, 'js_includes' ) );
+		add_action( "admin_print_styles-{$page}", array( $this, 'css_includes' ) );
+		add_action( "admin_head-{$page}", array( $this, 'help' ) );
+		add_action( "admin_head-{$page}", array( $this, 'take_action' ), 50 );
+		add_action( "admin_head-{$page}", array( $this, 'js' ), 50 );
 		if ( $this->admin_header_callback ) {
-			add_action( "admin_head-$page", $this->admin_header_callback, 51 );
+			add_action( "admin_head-{$page}", $this->admin_header_callback, 51 );
 		}
 	}
 
@@ -118,7 +118,12 @@ class Custom_Image_Header {
 				'id'      => 'set-header-text',
 				'title'   => __( 'Header Text' ),
 				'content' =>
-					'<p>' . sprintf( __( 'For most themes, the header text is your Site Title and Tagline, as defined in the <a href="%1$s">General Settings</a> section.' ), admin_url( 'options-general.php' ) ) . '<p>' .
+					'<p>' . sprintf(
+						/* translators: %s: URL to General Settings screen. */
+						__( 'For most themes, the header text is your Site Title and Tagline, as defined in the <a href="%s">General Settings</a> section.' ),
+						admin_url( 'options-general.php' )
+					) .
+					'</p>' .
 					'<p>' . __( 'In the Header Text section of this page, you can choose whether to display this text or hide it. You can also choose a color for the text by clicking the Select Color button and either typing in a legitimate HTML hex value, e.g. &#8220;#ff0000&#8221; for red, or by choosing a color using the color picker.' ) . '</p>' .
 					'<p>' . __( 'Don&#8217;t forget to click &#8220;Save Changes&#8221; when you&#8217;re done!' ) . '</p>',
 			)
@@ -276,7 +281,7 @@ class Custom_Image_Header {
 	 *                     or 'uploaded' (for the Uploaded Images control).
 	 */
 	public function show_header_selector( $type = 'default' ) {
-		if ( 'default' == $type ) {
+		if ( 'default' === $type ) {
 			$headers = $this->default_headers;
 		} else {
 			$headers = get_uploaded_header_images();
@@ -354,7 +359,7 @@ class Custom_Image_Header {
 		if ( ! checked )
 			return;
 		text_color = $('#text-color');
-		if ( '' == text_color.val().replace('#', '') ) {
+		if ( '' === text_color.val().replace('#', '') ) {
 			text_color.val( default_color );
 			pickColor( default_color );
 		} else {
@@ -473,10 +478,11 @@ class Custom_Image_Header {
 <div class="notice notice-info hide-if-no-customize">
 	<p>
 			<?php
-				printf(
-					__( 'You can now manage and live-preview Custom Header in the <a href="%1$s">Customizer</a>.' ),
-					admin_url( 'customize.php?autofocus[control]=header_image' )
-				);
+			printf(
+				/* translators: %s: URL to header image configuration in Customizer. */
+				__( 'You can now manage and live-preview Custom Header in the <a href="%s">Customizer</a>.' ),
+				admin_url( 'customize.php?autofocus[control]=header_image' )
+			);
 			?>
 	</p>
 </div>
@@ -484,7 +490,12 @@ class Custom_Image_Header {
 
 		<?php if ( ! empty( $this->updated ) ) { ?>
 <div id="message" class="updated">
-<p><?php printf( __( 'Header updated. <a href="%s">Visit your site</a> to see how it looks.' ), home_url( '/' ) ); ?></p>
+	<p>
+			<?php
+			/* translators: %s: Home URL. */
+			printf( __( 'Header updated. <a href="%s">Visit your site</a> to see how it looks.' ), home_url( '/' ) );
+			?>
+	</p>
 </div>
 		<?php } ?>
 
@@ -540,14 +551,15 @@ class Custom_Image_Header {
 	<p><?php _e( 'You can select an image to be shown at the top of your site by uploading from your computer or choosing from your media library. After selecting an image you will be able to crop it.' ); ?><br />
 			<?php
 			if ( ! current_theme_supports( 'custom-header', 'flex-height' ) && ! current_theme_supports( 'custom-header', 'flex-width' ) ) {
+				/* translators: 1: Image width in pixels, 2: Image height in pixels. */
 				printf( __( 'Images of exactly <strong>%1$d &times; %2$d pixels</strong> will be used as-is.' ) . '<br />', get_theme_support( 'custom-header', 'width' ), get_theme_support( 'custom-header', 'height' ) );
 			} elseif ( current_theme_supports( 'custom-header', 'flex-height' ) ) {
 				if ( ! current_theme_supports( 'custom-header', 'flex-width' ) ) {
 					printf(
-						/* translators: %s: size in pixels */
+						/* translators: %s: Size in pixels. */
 						__( 'Images should be at least %s wide.' ) . ' ',
 						sprintf(
-							/* translators: %d: custom header width */
+							/* translators: %d: Custom header width. */
 							'<strong>' . __( '%d pixels' ) . '</strong>',
 							get_theme_support( 'custom-header', 'width' )
 						)
@@ -556,10 +568,10 @@ class Custom_Image_Header {
 			} elseif ( current_theme_supports( 'custom-header', 'flex-width' ) ) {
 				if ( ! current_theme_supports( 'custom-header', 'flex-height' ) ) {
 					printf(
-						/* translators: %s: size in pixels */
+						/* translators: %s: Size in pixels. */
 						__( 'Images should be at least %s tall.' ) . ' ',
 						sprintf(
-							/* translators: %d: custom header height */
+							/* translators: %d: Custom header height. */
 							'<strong>' . __( '%d pixels' ) . '</strong>',
 							get_theme_support( 'custom-header', 'height' )
 						)
@@ -569,10 +581,10 @@ class Custom_Image_Header {
 			if ( current_theme_supports( 'custom-header', 'flex-height' ) || current_theme_supports( 'custom-header', 'flex-width' ) ) {
 				if ( current_theme_supports( 'custom-header', 'width' ) ) {
 					printf(
-						/* translators: %s: size in pixels */
+						/* translators: %s: Size in pixels. */
 						__( 'Suggested width is %s.' ) . ' ',
 						sprintf(
-							/* translators: %d: custom header width */
+							/* translators: %d: Custom header width. */
 							'<strong>' . __( '%d pixels' ) . '</strong>',
 							get_theme_support( 'custom-header', 'width' )
 						)
@@ -580,10 +592,10 @@ class Custom_Image_Header {
 				}
 				if ( current_theme_supports( 'custom-header', 'height' ) ) {
 					printf(
-						/* translators: %s: size in pixels */
+						/* translators: %s: Size in pixels. */
 						__( 'Suggested height is %s.' ) . ' ',
 						sprintf(
-							/* translators: %d: custom header height */
+							/* translators: %d: Custom header height. */
 							'<strong>' . __( '%d pixels' ) . '</strong>',
 							get_theme_support( 'custom-header', 'height' )
 						)
@@ -722,6 +734,7 @@ class Custom_Image_Header {
 
 			echo '<input type="text" name="text-color" id="text-color" value="' . esc_attr( $header_textcolor ) . '"' . $default_color_attr . ' />';
 			if ( $default_color ) {
+				/* translators: %s: Default text color. */
 				echo ' <span class="description hide-if-js">' . sprintf( _x( 'Default: %s', 'color' ), esc_html( $default_color ) ) . '</span>';
 			}
 			?>
@@ -787,7 +800,7 @@ endif;
 		}
 
 		$max_width = 0;
-		// For flex, limit size of image displayed to 1500px unless theme says otherwise
+		// For flex, limit size of image displayed to 1500px unless theme says otherwise.
 		if ( current_theme_supports( 'custom-header', 'flex-width' ) ) {
 			$max_width = 1500;
 		}
@@ -797,10 +810,10 @@ endif;
 		}
 		$max_width = max( $max_width, get_theme_support( 'custom-header', 'width' ) );
 
-		// If flexible height isn't supported and the image is the exact right size
+		// If flexible height isn't supported and the image is the exact right size.
 		if ( ! current_theme_supports( 'custom-header', 'flex-height' ) && ! current_theme_supports( 'custom-header', 'flex-width' )
-			&& $width == get_theme_support( 'custom-header', 'width' ) && $height == get_theme_support( 'custom-header', 'height' ) ) {
-			// Add the meta-data
+			&& get_theme_support( 'custom-header', 'width' ) == $width && get_theme_support( 'custom-header', 'height' ) == $height ) {
+			// Add the metadata.
 			if ( file_exists( $file ) ) {
 				wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $file ) );
 			}
@@ -815,7 +828,7 @@ endif;
 			 * @param string $file          Path to the file.
 			 * @param int    $attachment_id Attachment ID.
 			 */
-			do_action( 'wp_create_file_in_uploads', $file, $attachment_id ); // For replication
+			do_action( 'wp_create_file_in_uploads', $file, $attachment_id ); // For replication.
 
 			return $this->finished();
 		} elseif ( $width > $max_width ) {
@@ -826,7 +839,7 @@ endif;
 			}
 
 			/** This filter is documented in wp-admin/includes/class-custom-image-header.php */
-			$image = apply_filters( 'wp_create_file_in_uploads', $image, $attachment_id ); // For replication
+			$image = apply_filters( 'wp_create_file_in_uploads', $image, $attachment_id ); // For replication.
 
 			$url    = str_replace( wp_basename( $url ), wp_basename( $image ), $url );
 			$width  = $width / $oitar;
@@ -897,7 +910,7 @@ endif;
 		$file     = $file['file'];
 		$filename = wp_basename( $file );
 
-		// Construct the object array
+		// Construct the object array.
 		$object = array(
 			'post_title'     => $filename,
 			'post_content'   => $url,
@@ -906,7 +919,7 @@ endif;
 			'context'        => 'custom-header',
 		);
 
-		// Save the data
+		// Save the data.
 		$attachment_id = wp_insert_attachment( $object, $file );
 		return compact( 'attachment_id', 'file', 'filename', 'url', 'type' );
 	}
@@ -969,7 +982,7 @@ endif;
 		}
 
 		/** This filter is documented in wp-admin/includes/class-custom-image-header.php */
-		$cropped = apply_filters( 'wp_create_file_in_uploads', $cropped, $attachment_id ); // For replication
+		$cropped = apply_filters( 'wp_create_file_in_uploads', $cropped, $attachment_id ); // For replication.
 
 		$object = $this->create_attachment_object( $cropped, $attachment_id );
 
@@ -977,7 +990,7 @@ endif;
 			unset( $object['ID'] );
 		}
 
-		// Update the attachment
+		// Update the attachment.
 		$attachment_id = $this->insert_attachment( $object, $cropped );
 
 		$url = wp_get_attachment_url( $attachment_id );
@@ -1084,7 +1097,7 @@ endif;
 			return;
 		}
 
-		if ( in_array( $choice, array( 'remove-header', 'random-default-image', 'random-uploaded-image' ) ) ) {
+		if ( in_array( $choice, array( 'remove-header', 'random-default-image', 'random-uploaded-image' ), true ) ) {
 			set_theme_mod( 'header_image', $choice );
 			remove_theme_mod( 'header_image_data' );
 			return;
@@ -1167,7 +1180,7 @@ endif;
 			'dst_width'  => null,
 		);
 
-		// For flex, limit size of image displayed to 1500px unless theme says otherwise
+		// For flex, limit size of image displayed to 1500px unless theme says otherwise.
 		if ( $has_flex_width ) {
 			$max_width = 1500;
 		}
@@ -1231,7 +1244,7 @@ endif;
 	 * @since 3.9.0
 	 *
 	 * @param array  $object  Attachment object.
-	 * @param string $cropped Cropped image URL.
+	 * @param string $cropped File path to cropped image.
 	 * @return int Attachment ID.
 	 */
 	final public function insert_attachment( $object, $cropped ) {
@@ -1305,7 +1318,7 @@ endif;
 		}
 
 		/** This filter is documented in wp-admin/includes/class-custom-image-header.php */
-		$cropped = apply_filters( 'wp_create_file_in_uploads', $cropped, $attachment_id ); // For replication
+		$cropped = apply_filters( 'wp_create_file_in_uploads', $cropped, $attachment_id ); // For replication.
 
 		$object = $this->create_attachment_object( $cropped, $attachment_id );
 
@@ -1421,8 +1434,8 @@ endif;
 		// Get the default image if there is one.
 		$default = get_theme_support( 'custom-header', 'default-image' );
 
-		if ( ! $default ) { // If not,
-			return $this->default_headers; // easy peasy.
+		if ( ! $default ) { // If not, easy peasy.
+			return $this->default_headers;
 		}
 
 		$default             = sprintf( $default, get_template_directory_uri(), get_stylesheet_directory_uri() );
@@ -1477,7 +1490,7 @@ endif;
 	 *
 	 * @since 4.9.0
 	 *
-	 * @param  array $object A crop attachment object.
+	 * @param array $object A crop attachment object.
 	 * @return int|false An attachment ID if one exists. False if none.
 	 */
 	public function get_previous_crop( $object ) {

@@ -42,13 +42,13 @@ if ( $site_description && ( is_home() || is_front_page() ) ) {
 
 	// Add a page number if necessary:
 if ( ( $paged >= 2 || $page >= 2 ) && ! is_404() ) {
-	/* translators: %s: page number */
+	/* translators: %s: Page number. */
 	echo esc_html( ' | ' . sprintf( __( 'Page %s', 'twentyeleven' ), max( $paged, $page ) ) );
 }
 
 ?>
 	</title>
-<link rel="profile" href="http://gmpg.org/xfn/11" />
+<link rel="profile" href="https://gmpg.org/xfn/11" />
 <link rel="stylesheet" type="text/css" media="all" href="<?php bloginfo( 'stylesheet_url' ); ?>?ver=20190507" />
 <link rel="pingback" href="<?php echo esc_url( get_bloginfo( 'pingback_url' ) ); ?>">
 <!--[if lt IE 9]>
@@ -83,7 +83,7 @@ if ( is_singular() && get_option( 'thread_comments' ) ) {
 			</hgroup>
 
 			<?php
-				// Check to see if the header image has been removed
+				// Check to see if the header image has been removed.
 				$header_image = get_header_image();
 			if ( $header_image ) :
 				// Compatibility with versions of WordPress prior to 3.4.
@@ -121,14 +121,14 @@ if ( is_singular() && get_option( 'thread_comments' ) ) {
 					?>
 					<img src="<?php header_image(); ?>" width="<?php echo esc_attr( $header_image_width ); ?>" height="<?php echo esc_attr( $header_image_height ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" />
 					<?php
-				} // end check for featured image or standard header
+				} // End check for featured image or standard header.
 				?>
 			</a>
-			<?php endif; // end check for removed header image ?>
+			<?php endif; // End check for removed header image. ?>
 
 			<?php
 				// Has the text been hidden?
-			if ( 'blank' == get_header_textcolor() ) :
+			if ( 'blank' === get_header_textcolor() ) :
 				$header_image_class = '';
 				if ( $header_image ) {
 					$header_image_class = ' with-image';
@@ -145,13 +145,14 @@ if ( is_singular() && get_option( 'thread_comments' ) ) {
 
 			<nav id="access" role="navigation">
 				<h3 class="assistive-text"><?php _e( 'Main menu', 'twentyeleven' ); ?></h3>
-				<?php /* Allow screen readers / text browsers to skip the navigation menu and get right to the good stuff. */ ?>
-				<div class="skip-link"><a class="assistive-text" href="#content"><?php _e( 'Skip to primary content', 'twentyeleven' ); ?></a></div>
-				<?php if ( ! is_singular() ) : ?>
-					<div class="skip-link"><a class="assistive-text" href="#secondary"><?php _e( 'Skip to secondary content', 'twentyeleven' ); ?></a></div>
-				<?php endif; ?>
-				<?php /* Our navigation menu. If one isn't filled out, wp_nav_menu falls back to wp_page_menu. The menu assigned to the primary location is the one used. If one isn't assigned, the menu with the lowest ID is used. */ ?>
-				<?php wp_nav_menu( array( 'theme_location' => 'primary' ) ); ?>
+				<?php
+				/*
+				 * Our navigation menu. If one isn't filled out, wp_nav_menu() falls back to wp_page_menu().
+				 * The menu assigned to the primary location is the one used.
+				 * If one isn't assigned, the menu with the lowest ID is used.
+				 */
+				wp_nav_menu( array( 'theme_location' => 'primary' ) );
+				?>
 			</nav><!-- #access -->
 	</header><!-- #branding -->
 

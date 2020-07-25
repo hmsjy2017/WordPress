@@ -6,7 +6,7 @@
  *
  * @package WordPress
  * @subpackage Twenty_Seventeen
- * @since 1.0
+ * @since Twenty Seventeen 1.0
  */
 
 /**
@@ -77,6 +77,8 @@ function twentyseventeen_setup() {
 			'comment-list',
 			'gallery',
 			'caption',
+			'script',
+			'style',
 		)
 	);
 
@@ -282,9 +284,8 @@ function twentyseventeen_fonts_url() {
 	$fonts_url = '';
 
 	/*
-	 * Translators: If there are characters in your language that are not
-	 * supported by Libre Franklin, translate this to 'off'. Do not translate
-	 * into your own language.
+	 * translators: If there are characters in your language that are not supported
+	 * by Libre Franklin, translate this to 'off'. Do not translate into your own language.
 	 */
 	$libre_franklin = _x( 'on', 'Libre Franklin font: on or off', 'twentyseventeen' );
 
@@ -310,9 +311,9 @@ function twentyseventeen_fonts_url() {
  *
  * @since Twenty Seventeen 1.0
  *
- * @param array  $urls           URLs to print for resource hints.
- * @param string $relation_type  The relation type the URLs are printed.
- * @return array $urls           URLs to print for resource hints.
+ * @param array  $urls          URLs to print for resource hints.
+ * @param string $relation_type The relation type the URLs are printed.
+ * @return array URLs to print for resource hints.
  */
 function twentyseventeen_resource_hints( $urls, $relation_type ) {
 	if ( wp_style_is( 'twentyseventeen-fonts', 'queue' ) && 'preconnect' === $relation_type ) {
@@ -387,7 +388,7 @@ function twentyseventeen_excerpt_more( $link ) {
 	$link = sprintf(
 		'<p class="link-more"><a href="%1$s" class="more-link">%2$s</a></p>',
 		esc_url( get_permalink( get_the_ID() ) ),
-		/* translators: %s: Name of current post */
+		/* translators: %s: Post title. */
 		sprintf( __( 'Continue reading<span class="screen-reader-text"> "%s"</span>', 'twentyseventeen' ), get_the_title( get_the_ID() ) )
 	);
 	return ' &hellip; ' . $link;
@@ -424,7 +425,7 @@ function twentyseventeen_colors_css_wrap() {
 		return;
 	}
 
-	require_once( get_parent_theme_file_path( '/inc/color-patterns.php' ) );
+	require_once get_parent_theme_file_path( '/inc/color-patterns.php' );
 	$hue = absint( get_theme_mod( 'colorscheme_hue', 250 ) );
 
 	$customize_preview_data_hue = '';
@@ -588,8 +589,8 @@ add_filter( 'wp_get_attachment_image_attributes', 'twentyseventeen_post_thumbnai
  * @since Twenty Seventeen 1.0
  *
  * @param string $template front-page.php.
- *
- * @return string The template to be used: blank if is_home() is true (defaults to index.php), else $template.
+ * @return string The template to be used: blank if is_home() is true (defaults to index.php),
+ *                otherwise $template.
  */
 function twentyseventeen_front_page_template( $template ) {
 	return is_home() ? '' : $template;
@@ -616,7 +617,7 @@ function twentyseventeen_widget_tag_cloud_args( $args ) {
 add_filter( 'widget_tag_cloud_args', 'twentyseventeen_widget_tag_cloud_args' );
 
 /**
- * Get unique ID.
+ * Gets unique ID.
  *
  * This is a PHP implementation of Underscore's uniqueId method. A static variable
  * contains an integer that is incremented with each call. This number is returned
@@ -624,9 +625,8 @@ add_filter( 'widget_tag_cloud_args', 'twentyseventeen_widget_tag_cloud_args' );
  * but it is unique across the life of the PHP process.
  *
  * @since Twenty Seventeen 2.0
- * @see wp_unique_id() Themes requiring WordPress 5.0.3 and greater should use this instead.
  *
- * @staticvar int $id_counter
+ * @see wp_unique_id() Themes requiring WordPress 5.0.3 and greater should use this instead.
  *
  * @param string $prefix Prefix for the returned ID.
  * @return string Unique ID.
